@@ -118,7 +118,7 @@
     },
     "CHAABI EL BAGHDADI Islam": {
         telephone: "Non renseigné",
-        adresse: "Stage à l'étranger",
+        adresse: "STAGE A L'ETRANGER",
         profGeneral: "Mme DESTAILLEUR E.",
         profPro: "Mme AFKIR M."
     },
@@ -161,7 +161,7 @@
     "KHANFAR Celia": {
         telephone: " ",
         adresse: " ",
-        profGeneral: "Mme MAGDELAINE A.",
+        profGeneral: "M. AVLA K.",
         profPro: "Mme AFKIR M."
     },
     "KHLYSTUNOV Anatolii": {
@@ -191,7 +191,7 @@
     "MAMELEYEN KAZE Edwin Efren": {
         telephone: "07 82 73 98 47 / 03 20 56 85 49",
         adresse: "4 Rue Massenet, 59000 LILLE",
-        profGeneral: "Mme AOUADI M.",
+        profGeneral: "Mme MAGDELAINE A.",
         profPro: "Mme AFKIR M."
     },
     "MESSAOUDI Sofiane": {
@@ -222,7 +222,7 @@
         telephone: "06 05 03 42 16 / 03 20 05 12 33",
         adresse: "15/3 Chemin des vieux Arbres 59650 VILLENEUVE D'ASCQ",
         profGeneral: "M. DIANKHA O.",
-        profPro: "Mme AFKIR M."
+        profPro: "Mme CAPPELLI R."
     },
     "SERRAI Chiraz": {
         telephone: " ",
@@ -240,7 +240,7 @@
         telephone: "Non renseigné",
         adresse: "Entreprise d'accueil",
         profGeneral: "M. DIANKHA O.",
-        profPro: "Mme CAPPELLI R."
+        profPro: "Mme AFKIR M."
     }
 };
 
@@ -341,10 +341,15 @@
                                 <i class="fas fa-user-graduate text-indigo-500 mr-2"></i> ${escapeHtml(eleve)}
                             </div>
                             <div class="space-y-2">
-                                <div class="flex items-center gap-3">
-                                    <i class="fas fa-phone-alt text-gray-400 w-5"></i>
-                                    <span class="text-gray-700 font-mono">${infos.telephone}</span>
-                                </div>
+                          <div class="flex items-center gap-3">
+                                <i class="fas fa-phone-alt text-gray-400 w-5"></i>
+                                ${infos.telephone !== "Non renseigné" && infos.telephone !== " " && infos.telephone !== "" ? 
+                                    `<a href="tel:${infos.telephone.replace(/[^0-9+]/g, '')}" class="text-blue-600 font-mono underline hover:text-blue-800">
+                                        ${infos.telephone}
+                                    </a>` : 
+                                    `<span class="text-gray-700 font-mono">${infos.telephone}</span>`
+                                }
+                            </div>
                                 ${afficherGeneral ? `
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <i class="fas fa-chalkboard-user text-blue-500 w-5"></i>
@@ -359,9 +364,14 @@
                                 ` : ''}
                                 <div class="flex items-start gap-3">
                                     <i class="fas fa-map-marker-alt text-red-400 w-5 mt-0.5"></i>
-                                    <span class="text-gray-600 text-sm flex-1">${escapeHtml(infos.adresse)}</span>
+                                    ${infos.adresse !== " " && infos.adresse !== "Non renseignée" ? 
+                                        `<a href="https://maps.google.com/?q=${encodeURIComponent(infos.adresse)}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 text-sm flex-1 hover:underline">
+                                            ${escapeHtml(infos.adresse)}
+                                        </a>` : 
+                                        `<span class="text-gray-600 text-sm flex-1">${escapeHtml(infos.adresse)}</span>`
+                                    }
                                 </div>
-                            </div>
+                                                            </div>
                         </div>
                         <div class="h-1 bg-gradient-to-r from-indigo-100 to-transparent"></div>
                     </div>
