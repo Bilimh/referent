@@ -93,8 +93,8 @@
         profPro: "Mme CAPPELLI R."
     },
     "BELDJOUHAR Zeyd": {
-        telephone: "Non renseigné",
-        adresse: "Entreprise d'accueil",
+        telephone: "",
+        adresse: "",
         profGeneral: "Mme CUISSET C.",
         profPro: "Mme AFKIR M."
     },
@@ -117,7 +117,7 @@
         profPro: "Mme CAPPELLI R."
     },
     "CHAABI EL BAGHDADI Islam": {
-        telephone: "Non renseigné",
+        telephone: "",
         adresse: "STAGE A L'ETRANGER",
         profGeneral: "Mme DESTAILLEUR E.",
         profPro: "Mme AFKIR M."
@@ -237,8 +237,8 @@
         profPro: "Mme CAPPELLI R."
     },
     "ZOUGHAIB Jean-Paul": {
-        telephone: "Non renseigné",
-        adresse: "Entreprise d'accueil",
+        telephone: "",
+        adresse: "",
         profGeneral: "M. DIANKHA O.",
         profPro: "Mme AFKIR M."
     }
@@ -341,15 +341,24 @@
                                 <i class="fas fa-user-graduate text-indigo-500 mr-2"></i> ${escapeHtml(eleve)}
                             </div>
                             <div class="space-y-2">
-                          <div class="flex items-center gap-3">
-                                <i class="fas fa-phone-alt text-gray-400 w-5"></i>
-                                ${infos.telephone !== "Non renseigné" && infos.telephone !== " " && infos.telephone !== "" ? 
-                                    `<a href="tel:${infos.telephone.replace(/[^0-9+]/g, '')}" class="text-blue-600 font-mono underline hover:text-blue-800">
-                                        ${infos.telephone}
-                                    </a>` : 
-                                    `<span class="text-gray-700 font-mono">${infos.telephone}</span>`
-                                }
-                            </div>
+<div class="flex items-center gap-3 flex-wrap">
+    <i class="fas fa-phone-alt text-gray-400 w-5 mt-1"></i>
+    <div class="flex flex-wrap gap-2">
+        ${(() => {
+            if (!infos.telephone || infos.telephone === "Non renseigné" || infos.telephone === " ") {
+                return `<span class="text-gray-700 font-mono">Non renseigné</span>`;
+            }
+            // Sépare les numéros si présence de " / " ou " - "
+            const numeros = infos.telephone.split(/[\/\-]/).map(n => n.trim());
+            return numeros.map(num => {
+                const numClean = num.replace(/[^0-9+]/g, '');
+                return `<a href="tel:${numClean}" class="text-blue-600 font-mono underline hover:text-blue-800 bg-blue-50 px-2 py-1 rounded-lg">
+                            ${num}
+                        </a>`;
+            }).join('');
+        })()}
+    </div>
+</div>
                                 ${afficherGeneral ? `
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <i class="fas fa-chalkboard-user text-blue-500 w-5"></i>
