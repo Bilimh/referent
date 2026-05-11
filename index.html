@@ -5,136 +5,306 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Suivi Stage - Référents</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #f5f7fb; }
-        .card:active { transform: scale(0.99); transition: transform 0.05s; }
     </style>
 </head>
 <body class="p-4 pb-20">
 
     <div class="max-w-xl mx-auto">
-        <!-- Header -->
+        <!-- HEADER LYCÉE -->
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">📋 Suivi stage</h1>
-            <p class="text-gray-400 text-sm mt-0.5">Élèves et numéro tuteur</p>
+            <div class="bg-gradient-to-r from-blue-800 to-indigo-900 rounded-2xl p-4 shadow-lg">
+                <div class="text-center">
+                    <p class="text-indigo-200 text-xs font-semibold tracking-wider">LYCÉE PROFESSIONNEL</p>
+                    <h1 class="text-white text-2xl font-bold">Aimé Césaire</h1>
+                    <p class="text-indigo-200 text-sm mt-1">Suivi des élèves - Stage</p>
+                </div>
+            </div>
         </div>
 
         <!-- Filtres -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
-            <!-- Boutons Général / Pro -->
             <div class="flex gap-3 mb-5">
                 <button id="btnGeneral" class="flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95">
-                    🎓 Général
+                    <i class="fas fa-chalkboard-user mr-2"></i> Général
                 </button>
                 <button id="btnPro" class="flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95">
-                    🔧 Professionnel
+                    <i class="fas fa-tools mr-2"></i> Professionnel
                 </button>
             </div>
 
-            <!-- Sélecteur professeur -->
             <div class="mb-4">
-                <label class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Professeur</label>
+                <label class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+                    <i class="fas fa-user-graduate mr-1"></i> Professeur
+                </label>
                 <select id="profSelect" class="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 text-base focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 outline-none">
                     <option value="">-- Choisissez un enseignant --</option>
                 </select>
             </div>
 
             <button id="resetBtn" class="w-full py-2.5 text-sm text-gray-500 bg-gray-50 rounded-xl border border-gray-200 active:bg-gray-100 transition">
-                ✖️ Réinitialiser
+                <i class="fas fa-undo-alt mr-1"></i> Réinitialiser
             </button>
         </div>
 
         <!-- Liste des élèves -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-5 py-3 bg-white border-b border-gray-100 flex justify-between items-center">
-                <span class="text-sm font-semibold text-gray-700">👨‍🎓 Élèves</span>
-                <span id="compteur" class="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
-            </div>
-            <div id="listeEleves" class="divide-y divide-gray-50">
-                <div class="p-8 text-center text-gray-400 text-sm">
-                    Sélectionnez un type puis un professeur
-                </div>
+        <div id="listeEleves" class="space-y-4">
+            <div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
+                <i class="fas fa-hand-pointer mr-2"></i> Sélectionnez un type puis un professeur
             </div>
         </div>
+
+        <!-- FOOTER -->
+        <div class="mt-8 pt-4 border-t border-gray-200 text-center">
+            <p class="text-gray-500 text-sm">
+                <i class="fas fa-chalkboard mr-1"></i> M. DIANKHA - Professeur principal
+            </p>
+            <p class="text-gray-400 text-xs mt-1">
+                <i class="far fa-calendar-alt mr-1"></i> 1 AGORA • 2026
+            </p>
+        </div>
     </div>
+    
+    
 
+    
     <script>
-        // --------------------------------------------------------------
-        // DONNÉES ÉLÈVES (depuis ton CSV)
-        // --------------------------------------------------------------
-        const elevesNoms = [
-            "ABOURY OCCULI Heureuse Nihrole", "ACHAMMAMI Jawed", "ASSONG NTARY Alexia", "BELDJOUHAR Zeyd",
-            "BOUJDIF Yassin", "BOUKLATA Augustin", "BOULOUH Néjima", "CHAABI EL BAGHDADI Islam",
-            "CHERGUI Fatima Zahra", "COULIBALY Houraye", "DEWIT Mathias", "DIAKITE Naya",
-            "GAROSHVILI Mariam", "KERE Anne", "KHANFAR Celia", "KHLYSTUNOV Anatolii",
-            "KRIBA Nawel", "LAGHMICH Nadia", "LOUAFI Mahidinne", "MAMELEYEN KAZE Edwin Efren",
-            "MESSAOUDI Sofiane", "MILLIMONO Djenabou", "NYEMBA Rhema", "PRETE Flavia",
-            "RIGA Madyson", "SECK Soukeyna", "SERRAI Chiraz", "ZAHABU Jennie", "ZOUGHAIB Jean-Paul"
-        ];
+        // ==============================================================
+        // 📋 LISTE UNIQUE DES ÉLÈVES
+        // Chaque élève contient : téléphone, adresse, profG, profPro
+        // ==============================================================
 
-        // 5 profs généraux (SANS parenthèses)
-        const PROFS_GENERAUX = [
-            "Mme Martin",
-            "M. Dupont",
-            "Mme Laurent",
-            "M. Bernard",
-            "Mme Petit"
-        ];
+        const ELEVES = {
+    "ABOURY OCCULI Heureuse Nihrole": {
+        telephone: "06 63 01 79 36",
+        adresse: "41 rue du Marché, 59000 LILLE",
+        profGeneral: "M. DIANKHA O.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "ACHAMMAMI Jawed": {
+        telephone: "03 20 93 53 61",
+        adresse: "93 Rue d'Esquermes, 59000 LILLE",
+        profGeneral: "Mme CUISSET C.",
+        profPro: "Mme AFKIR M."
+    },
+    "ASSONG NTARY Alexia": {
+        telephone: "03 20 52 70 80",
+        adresse: "17 bd V. Hugo, 59000 LILLE",
+        profGeneral: "M. MALHEIRO D.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "BELDJOUHAR Zeyd": {
+        telephone: "Non renseigné",
+        adresse: "Entreprise d'accueil",
+        profGeneral: "Mme CUISSET C.",
+        profPro: "Mme AFKIR M."
+    },
+    "BOUJDIF Yassin": {
+        telephone: "03 20 52 11 37",
+        adresse: "38 Rue Augustin Drapiez, 59000 LILLE",
+        profGeneral: "Mme VILMANT T.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "BOUKLATA Augustin": {
+        telephone: "03 20 62 99 10",
+        adresse: "306 RUE CLEMENCEAU, 59139 WATTIGNIES",
+        profGeneral: "M. AVLA K.",
+        profPro: "Mme AFKIR M."
+    },
+    "BOULOUH Néjima": {
+        telephone: "03 20 88 67 88",
+        adresse: "332 Boulevard d'Alsace, 59043 LILLE CEDEX",
+        profGeneral: "M. DAOUIL S.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "CHAABI EL BAGHDADI Islam": {
+        telephone: "Non renseigné",
+        adresse: "Stage à l'étranger",
+        profGeneral: "Mme DESTAILLEUR E.",
+        profPro: "Mme AFKIR M."
+    },
+    "CHERGUI Fatima Zahra": {
+        telephone: "03 20 88 67 88",
+        adresse: "332 Boulevard d'Alsace, 59043 LILLE CEDEX",
+        profGeneral: "M. TIMELLI G.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "COULIBALY Houraye": {
+        telephone: "06 15 94 04 66",
+        adresse: "1 Boulevard des cités unies, 59777 LILLE",
+        profGeneral: "M. DIANKHA O.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "DEWIT Mathias": {
+        telephone: "03 20 88 67 85",
+        adresse: "332 Boulevard d'Alsace, 59043 LILLE CEDEX",
+        profGeneral: "Mme CUISSET C.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "DIAKITE Naya": {
+        telephone: " ",
+        adresse: "STAGE A L'ETRANGER",
+        profGeneral: "Mme DESTAILLEUR E.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "GAROSHVILI Mariam": {
+        telephone: " ",
+        adresse: "STAGE A L'ETRANGER",
+        profGeneral: "Mme DESTAILLEUR E.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "KERE Anne": {
+        telephone: " ",
+        adresse: "STAGE A L'ETRANGER",
+        profGeneral: "Mme DESTAILLEUR E.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "KHANFAR Celia": {
+        telephone: " ",
+        adresse: " ",
+        profGeneral: "Mme MAGDELAINE A.",
+        profPro: "Mme AFKIR M."
+    },
+    "KHLYSTUNOV Anatolii": {
+        telephone: " ",
+        adresse: " ",
+        profGeneral: "M. TIMELLI G.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "KRIBA Nawel": {
+        telephone: "07 68 22 89 31",
+        adresse: "442 AVENUE DE DUNKERQUE, 59160 LOMME",
+        profGeneral: "Mme VILMANT T.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "LAGHMICH Nadia": {
+        telephone: "07 67 60 52 63 / 07 88 20 13 74",
+        adresse: "1 Rue de Philadelphies, 59800 LILLE",
+        profGeneral: "M. TIMELLI G.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "LOUAFI Mahidinne": {
+        telephone: " ",
+        adresse: " ",
+        profGeneral: "M. DIANKHA O.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "MAMELEYEN KAZE Edwin Efren": {
+        telephone: "07 82 73 98 47 / 03 20 56 85 49",
+        adresse: "4 Rue Massenet, 59000 LILLE",
+        profGeneral: "Mme AOUADI M.",
+        profPro: "Mme AFKIR M."
+    },
+    "MESSAOUDI Sofiane": {
+        telephone: "03 20 34 00 75",
+        adresse: "47 Rue Corneille, 59650 VILLENEUVE D'ASCQ",
+        profGeneral: "Mme AOUADI M.",
+        profPro: "Mme AFKIR M."
+    },
+    "MILLIMONO Djenabou": {
+        telephone: "07 59 59 01 42",
+        adresse: "475 AVENUE DE DUNKERQUE, 59000 LILLE",
+        profGeneral: "M. AVLA K.",
+        profPro: "Mme KATANOVIC F."
+    },
+    "NYEMBA Rhema": {
+        telephone: "03 20 29 50 50",
+        adresse: "(EPDSAE) PLACE ABBE DE L'EPEE, 59790 RONCHIN",
+        profGeneral: "M. TIMELLI G.",
+        profPro: "Mme KATANOVIC F."
+    },
 
-        // 3 profs pro (SANS parenthèses)
-        const PROFS_PRO = [
-            "M. Moreau",
-            "Mme Dubois",
-            "M. Leroy"
-        ];
+    "RIGA Madyson": {
+        telephone: "03 20 06 17 22",
+        adresse: "24 Rue des Archives 59009 LILLE CEDEX FRANCE BP 151",
+        profGeneral: "M. TIMELLI G.",
+        profPro: "Mme KATANOVIC F."    
 
-        // Générer numéro de tuteur aléatoire
-        function genererTel() {
-            let debut = Math.random() < 0.5 ? "06" : "07";
-            let num = debut;
-            for (let i = 0; i < 8; i++) num += Math.floor(Math.random() * 10);
-            return num.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4 $5");
-        }
 
-        // Assignation aléatoire pour chaque élève
-        let elevesData = [];
+    },
+    "SECK Soukeyna": {
+        telephone: "06 05 03 42 16 / 03 20 05 12 33",
+        adresse: "15/3 Chemin des vieux Arbres 59650 VILLENEUVE D'ASCQ",
+        profGeneral: "M. DIANKHA O.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "SERRAI Chiraz": {
+        telephone: " ",
+        adresse: " ",
+        profGeneral: "M. DIANKHA O.",
+        profPro: "Mme AFKIR M."
+    },
+    "ZAHABU Jennie": {
+        telephone: "03 20 06 87 40",
+        adresse: "23 Rue Eugène Jacquet 59000 LILLE ",
+        profGeneral: "Mme VILMANT T.",
+        profPro: "Mme CAPPELLI R."
+    },
+    "ZOUGHAIB Jean-Paul": {
+        telephone: "Non renseigné",
+        adresse: "Entreprise d'accueil",
+        profGeneral: "M. DIANKHA O.",
+        profPro: "Mme AFKIR M."
+    }
+};
 
-        function initData() {
-            elevesData = elevesNoms.map(nom => ({
-                nom: nom,
-                profGeneral: PROFS_GENERAUX[Math.floor(Math.random() * PROFS_GENERAUX.length)],
-                profPro: PROFS_PRO[Math.floor(Math.random() * PROFS_PRO.length)],
-                telTuteur: genererTel()
-            }));
-        }
+        // ==============================================================
+        // CONSTRUCTION AUTOMATIQUE DES LISTES PAR PROFESSEUR
+        // ==============================================================
+        
+        // Extraire la liste unique des profs généraux
+        const profsGenerauxListe = [...new Set(Object.values(ELEVES).map(e => e.profGeneral))];
+        
+        // Extraire la liste unique des profs pro
+        const profsProListe = [...new Set(Object.values(ELEVES).map(e => e.profPro))];
+        
+        // Construire l'objet PROFS_GENERAUX avec les élèves
+        const PROFS_GENERAUX = {};
+        profsGenerauxListe.forEach(prof => {
+            PROFS_GENERAUX[prof] = {
+                eleves: Object.keys(ELEVES).filter(nom => ELEVES[nom].profGeneral === prof)
+            };
+        });
+        
+        // Construire l'objet PROFS_PRO avec les élèves
+        const PROFS_PRO = {};
+        profsProListe.forEach(prof => {
+            PROFS_PRO[prof] = {
+                eleves: Object.keys(ELEVES).filter(nom => ELEVES[nom].profPro === prof)
+            };
+        });
 
         // État du filtre
-        let typeActif = null;      // 'general' ou 'pro'
+        let typeActif = null;
         let profActuel = null;
 
-        // Mettre à jour la dropdown
+        function getInfoEleve(nom) {
+            return ELEVES[nom];
+        }
+
         function mettreAJourSelect() {
             const select = document.getElementById('profSelect');
             select.innerHTML = '<option value="">-- Choisissez un enseignant --</option>';
             
             if (typeActif === 'general') {
-                PROFS_GENERAUX.forEach(p => {
+                Object.keys(PROFS_GENERAUX).forEach(prof => {
                     let opt = document.createElement('option');
-                    opt.value = p;
-                    opt.textContent = p;
+                    opt.value = prof;
+                    opt.textContent = prof;
                     select.appendChild(opt);
                 });
             } else if (typeActif === 'pro') {
-                PROFS_PRO.forEach(p => {
+                Object.keys(PROFS_PRO).forEach(prof => {
                     let opt = document.createElement('option');
-                    opt.value = p;
-                    opt.textContent = p;
+                    opt.value = prof;
+                    opt.textContent = prof;
                     select.appendChild(opt);
                 });
             }
             
-            // Restaurer la sélection si possible
             if (profActuel && [...select.options].some(opt => opt.value === profActuel)) {
                 select.value = profActuel;
             } else {
@@ -145,61 +315,67 @@
             raffraichirAffichage();
         }
 
-        // Récupérer les élèves filtrés
-        function getElevesFiltres() {
-            if (!typeActif || !profActuel) return [];
-            
-            return elevesData.filter(eleve => {
-                if (typeActif === 'general') {
-                    return eleve.profGeneral === profActuel;
-                } else {
-                    return eleve.profPro === profActuel;
-                }
-            });
+        function getElevesParProf(type, profNom) {
+            if (type === 'general') {
+                return PROFS_GENERAUX[profNom]?.eleves || [];
+            } else {
+                return PROFS_PRO[profNom]?.eleves || [];
+            }
         }
-        
-        // Affichage : on montre l'AUTRE professeur (pas celui qui est connecté)
+
         function raffraichirAffichage() {
             const container = document.getElementById('listeEleves');
-            const compteurSpan = document.getElementById('compteur');
-            const elevesFiltres = getElevesFiltres();
             
-            if (!typeActif || !profActuel || elevesFiltres.length === 0) {
-                if (typeActif && profActuel) {
-                    container.innerHTML = `<div class="p-8 text-center text-gray-400 text-sm">Aucun élève pour ce professeur</div>`;
-                } else {
-                    container.innerHTML = `<div class="p-8 text-center text-gray-400 text-sm">👈 Choisissez un type et un professeur</div>`;
-                }
-                compteurSpan.innerText = '0';
+            if (!typeActif || !profActuel) {
+                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
+                    <i class="fas fa-hand-pointer mr-2"></i> Choisissez un type puis un professeur
+                </div>`;
+                return;
+            }
+            
+            const eleves = getElevesParProf(typeActif, profActuel);
+            
+            if (eleves.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
+                    <i class="fas fa-user-slash mr-2"></i> Aucun élève pour ce professeur
+                </div>`;
                 return;
             }
             
             let html = '';
-            for (let eleve of elevesFiltres) {
-                // L'autre professeur (pas celui qui filtre)
-                const autreProf = (typeActif === 'general') ? eleve.profPro : eleve.profGeneral;
-                const labelAutre = (typeActif === 'general') ? '🔧 Référent Pro' : '🎓 Référent Général';
+            for (let eleve of eleves) {
+                const infos = getInfoEleve(eleve);
                 
                 html += `
-                    <div class="card p-4 hover:bg-gray-50 transition">
-                        <div class="flex justify-between items-start gap-3">
-                            <div class="flex-1">
-                                <div class="font-bold text-gray-800 text-base">${escapeHtml(eleve.nom)}</div>
-                                <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <span class="text-xs text-gray-400">${labelAutre}</span>
-                                    <span class="text-sm font-medium text-gray-700">${escapeHtml(autreProf)}</span>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-full">
+                        <div class="p-5">
+                            <div class="font-bold text-gray-800 text-lg mb-3">
+                                <i class="fas fa-user-graduate text-indigo-500 mr-2"></i> ${escapeHtml(eleve)}
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-phone-alt text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 font-mono">${infos.telephone}</span>
+                                </div>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <i class="fas fa-chalkboard-user text-blue-500 w-5"></i>
+                                    <span class="text-gray-600 text-sm"><span class="font-medium">Ens. Général :</span> ${escapeHtml(infos.profGeneral)}</span>
+                                </div>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <i class="fas fa-tools text-green-500 w-5"></i>
+                                    <span class="text-gray-600 text-sm"><span class="font-medium">Ens. Pro :</span> ${escapeHtml(infos.profPro)}</span>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-map-marker-alt text-red-400 w-5 mt-0.5"></i>
+                                    <span class="text-gray-600 text-sm flex-1">${escapeHtml(infos.adresse)}</span>
                                 </div>
                             </div>
-                            <div class="bg-indigo-50 rounded-xl px-3 py-2 min-w-[100px] text-right">
-                                <div class="text-xs text-gray-500">📞 Tuteur</div>
-                                <div class="text-base font-mono font-bold text-indigo-700">${eleve.telTuteur}</div>
-                            </div>
                         </div>
+                        <div class="h-1 bg-gradient-to-r from-indigo-100 to-transparent"></div>
                     </div>
                 `;
             }
             container.innerHTML = html;
-            compteurSpan.innerText = elevesFiltres.length;
         }
         
         function escapeHtml(str) {
@@ -212,7 +388,6 @@
             });
         }
         
-        // Changement de type
         function setType(type) {
             typeActif = type;
             profActuel = null;
@@ -231,7 +406,6 @@
             mettreAJourSelect();
         }
         
-        // Réinitialisation
         function resetFiltres() {
             typeActif = null;
             profActuel = null;
@@ -243,11 +417,11 @@
             select.innerHTML = '<option value="">-- Choisissez un enseignant --</option>';
             select.value = "";
             
-            document.getElementById('listeEleves').innerHTML = `<div class="p-8 text-center text-gray-400 text-sm">Sélectionnez un type puis un professeur</div>`;
-            document.getElementById('compteur').innerText = '0';
+            document.getElementById('listeEleves').innerHTML = `<div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
+                <i class="fas fa-hand-pointer mr-2"></i> Sélectionnez un type puis un professeur
+            </div>`;
         }
         
-        // Événements
         function bindEvents() {
             document.getElementById('btnGeneral').addEventListener('click', () => setType('general'));
             document.getElementById('btnPro').addEventListener('click', () => setType('pro'));
@@ -260,8 +434,6 @@
             });
         }
         
-        // Initialisation
-        initData();
         bindEvents();
         resetFiltres();
     </script>
