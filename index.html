@@ -67,14 +67,10 @@
             </p>
         </div>
     </div>
-    
-    
 
-    
     <script>
         // ==============================================================
         // 📋 LISTE UNIQUE DES ÉLÈVES
-        // Chaque élève contient : téléphone, adresse, profG, profPro
         // ==============================================================
 
         const ELEVES = {
@@ -216,20 +212,17 @@
         profGeneral: "M. TIMELLI G.",
         profPro: "Mme KATANOVIC F."
     },
-
     "RIGA Madyson": {
         telephone: "03 20 06 17 22",
         adresse: "24 Rue des Archives 59009 LILLE CEDEX FRANCE BP 151",
         profGeneral: "M. TIMELLI G.",
         profPro: "Mme KATANOVIC F."    
-
-
     },
     "SECK Soukeyna": {
         telephone: "06 05 03 42 16 / 03 20 05 12 33",
         adresse: "15/3 Chemin des vieux Arbres 59650 VILLENEUVE D'ASCQ",
         profGeneral: "M. DIANKHA O.",
-        profPro: "Mme CAPPELLI R."
+        profPro: "Mme AFKIR M."
     },
     "SERRAI Chiraz": {
         telephone: " ",
@@ -247,21 +240,14 @@
         telephone: "Non renseigné",
         adresse: "Entreprise d'accueil",
         profGeneral: "M. DIANKHA O.",
-        profPro: "Mme AFKIR M."
+        profPro: "Mme CAPPELLI R."
     }
 };
 
-        // ==============================================================
-        // CONSTRUCTION AUTOMATIQUE DES LISTES PAR PROFESSEUR
-        // ==============================================================
-        
-        // Extraire la liste unique des profs généraux
+        // Construction automatique des listes par professeur
         const profsGenerauxListe = [...new Set(Object.values(ELEVES).map(e => e.profGeneral))];
-        
-        // Extraire la liste unique des profs pro
         const profsProListe = [...new Set(Object.values(ELEVES).map(e => e.profPro))];
         
-        // Construire l'objet PROFS_GENERAUX avec les élèves
         const PROFS_GENERAUX = {};
         profsGenerauxListe.forEach(prof => {
             PROFS_GENERAUX[prof] = {
@@ -269,7 +255,6 @@
             };
         });
         
-        // Construire l'objet PROFS_PRO avec les élèves
         const PROFS_PRO = {};
         profsProListe.forEach(prof => {
             PROFS_PRO[prof] = {
@@ -277,7 +262,6 @@
             };
         });
 
-        // État du filtre
         let typeActif = null;
         let profActuel = null;
 
@@ -342,6 +326,10 @@
                 return;
             }
             
+            // Déterminer quel type de professeur on AFFICHE (l'inverse de celui qui filtre)
+            const afficherGeneral = (typeActif === 'pro'); // Si filtre Pro, on affiche le Général
+            const afficherPro = (typeActif === 'general'); // Si filtre Général, on affiche le Pro
+            
             let html = '';
             for (let eleve of eleves) {
                 const infos = getInfoEleve(eleve);
@@ -357,14 +345,18 @@
                                     <i class="fas fa-phone-alt text-gray-400 w-5"></i>
                                     <span class="text-gray-700 font-mono">${infos.telephone}</span>
                                 </div>
+                                ${afficherGeneral ? `
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <i class="fas fa-chalkboard-user text-blue-500 w-5"></i>
                                     <span class="text-gray-600 text-sm"><span class="font-medium">Ens. Général :</span> ${escapeHtml(infos.profGeneral)}</span>
                                 </div>
+                                ` : ''}
+                                ${afficherPro ? `
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <i class="fas fa-tools text-green-500 w-5"></i>
                                     <span class="text-gray-600 text-sm"><span class="font-medium">Ens. Pro :</span> ${escapeHtml(infos.profPro)}</span>
                                 </div>
+                                ` : ''}
                                 <div class="flex items-start gap-3">
                                     <i class="fas fa-map-marker-alt text-red-400 w-5 mt-0.5"></i>
                                     <span class="text-gray-600 text-sm flex-1">${escapeHtml(infos.adresse)}</span>

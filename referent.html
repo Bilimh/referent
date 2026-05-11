@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Suivi Stage - Référents</title>
+    <title>Élève - Référents Stage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -20,28 +20,19 @@
                 <div class="text-center">
                     <p class="text-indigo-200 text-xs font-semibold tracking-wider">LYCÉE PROFESSIONNEL</p>
                     <h1 class="text-white text-2xl font-bold">Aimé Césaire</h1>
-                    <p class="text-indigo-200 text-sm mt-1">Suivi des élèves - Stage</p>
+                    <p class="text-indigo-200 text-sm mt-1">Recherche des référents par élève</p>
                 </div>
             </div>
         </div>
 
-        <!-- Filtres -->
+        <!-- Sélecteur d'élève -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
-            <div class="flex gap-3 mb-5">
-                <button id="btnGeneral" class="flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95">
-                    <i class="fas fa-chalkboard-user mr-2"></i> Général
-                </button>
-                <button id="btnPro" class="flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95">
-                    <i class="fas fa-tools mr-2"></i> Professionnel
-                </button>
-            </div>
-
             <div class="mb-4">
                 <label class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
-                    <i class="fas fa-user-graduate mr-1"></i> Professeur
+                    <i class="fas fa-user-graduate mr-1"></i> Choisissez un élève
                 </label>
-                <select id="profSelect" class="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 text-base focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 outline-none">
-                    <option value="">-- Choisissez un enseignant --</option>
+                <select id="eleveSelect" class="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 text-base focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 outline-none">
+                    <option value="">-- Choisissez un élève --</option>
                 </select>
             </div>
 
@@ -50,10 +41,10 @@
             </button>
         </div>
 
-        <!-- Liste des élèves -->
-        <div id="listeEleves" class="space-y-4">
-            <div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
-                <i class="fas fa-hand-pointer mr-2"></i> Sélectionnez un type puis un professeur
+        <!-- Affichage des référents -->
+        <div id="carteReferent" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-8 text-center text-gray-400 text-sm">
+                <i class="fas fa-hand-pointer mr-2"></i> Sélectionnez un élève pour voir ses référents
             </div>
         </div>
 
@@ -67,14 +58,10 @@
             </p>
         </div>
     </div>
-    
-    
 
-    
     <script>
         // ==============================================================
         // 📋 LISTE UNIQUE DES ÉLÈVES
-        // Chaque élève contient : téléphone, adresse, profG, profPro
         // ==============================================================
 
         const ELEVES = {
@@ -216,14 +203,11 @@
         profGeneral: "M. TIMELLI G.",
         profPro: "Mme KATANOVIC F."
     },
-
     "RIGA Madyson": {
         telephone: "03 20 06 17 22",
         adresse: "24 Rue des Archives 59009 LILLE CEDEX FRANCE BP 151",
         profGeneral: "M. TIMELLI G.",
         profPro: "Mme KATANOVIC F."    
-
-
     },
     "SECK Soukeyna": {
         telephone: "06 05 03 42 16 / 03 20 05 12 33",
@@ -251,133 +235,15 @@
     }
 };
 
-        // ==============================================================
-        // CONSTRUCTION AUTOMATIQUE DES LISTES PAR PROFESSEUR
-        // ==============================================================
-        
-        // Extraire la liste unique des profs généraux
-        const profsGenerauxListe = [...new Set(Object.values(ELEVES).map(e => e.profGeneral))];
-        
-        // Extraire la liste unique des profs pro
-        const profsProListe = [...new Set(Object.values(ELEVES).map(e => e.profPro))];
-        
-        // Construire l'objet PROFS_GENERAUX avec les élèves
-        const PROFS_GENERAUX = {};
-        profsGenerauxListe.forEach(prof => {
-            PROFS_GENERAUX[prof] = {
-                eleves: Object.keys(ELEVES).filter(nom => ELEVES[nom].profGeneral === prof)
-            };
-        });
-        
-        // Construire l'objet PROFS_PRO avec les élèves
-        const PROFS_PRO = {};
-        profsProListe.forEach(prof => {
-            PROFS_PRO[prof] = {
-                eleves: Object.keys(ELEVES).filter(nom => ELEVES[nom].profPro === prof)
-            };
+        // Remplir la liste déroulante des élèves
+        const eleveSelect = document.getElementById('eleveSelect');
+        Object.keys(ELEVES).sort().forEach(nom => {
+            const option = document.createElement('option');
+            option.value = nom;
+            option.textContent = nom;
+            eleveSelect.appendChild(option);
         });
 
-        // État du filtre
-        let typeActif = null;
-        let profActuel = null;
-
-        function getInfoEleve(nom) {
-            return ELEVES[nom];
-        }
-
-        function mettreAJourSelect() {
-            const select = document.getElementById('profSelect');
-            select.innerHTML = '<option value="">-- Choisissez un enseignant --</option>';
-            
-            if (typeActif === 'general') {
-                Object.keys(PROFS_GENERAUX).forEach(prof => {
-                    let opt = document.createElement('option');
-                    opt.value = prof;
-                    opt.textContent = prof;
-                    select.appendChild(opt);
-                });
-            } else if (typeActif === 'pro') {
-                Object.keys(PROFS_PRO).forEach(prof => {
-                    let opt = document.createElement('option');
-                    opt.value = prof;
-                    opt.textContent = prof;
-                    select.appendChild(opt);
-                });
-            }
-            
-            if (profActuel && [...select.options].some(opt => opt.value === profActuel)) {
-                select.value = profActuel;
-            } else {
-                select.value = "";
-                profActuel = null;
-            }
-            
-            raffraichirAffichage();
-        }
-
-        function getElevesParProf(type, profNom) {
-            if (type === 'general') {
-                return PROFS_GENERAUX[profNom]?.eleves || [];
-            } else {
-                return PROFS_PRO[profNom]?.eleves || [];
-            }
-        }
-
-        function raffraichirAffichage() {
-            const container = document.getElementById('listeEleves');
-            
-            if (!typeActif || !profActuel) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
-                    <i class="fas fa-hand-pointer mr-2"></i> Choisissez un type puis un professeur
-                </div>`;
-                return;
-            }
-            
-            const eleves = getElevesParProf(typeActif, profActuel);
-            
-            if (eleves.length === 0) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
-                    <i class="fas fa-user-slash mr-2"></i> Aucun élève pour ce professeur
-                </div>`;
-                return;
-            }
-            
-            let html = '';
-            for (let eleve of eleves) {
-                const infos = getInfoEleve(eleve);
-                
-                html += `
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-full">
-                        <div class="p-5">
-                            <div class="font-bold text-gray-800 text-lg mb-3">
-                                <i class="fas fa-user-graduate text-indigo-500 mr-2"></i> ${escapeHtml(eleve)}
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-3">
-                                    <i class="fas fa-phone-alt text-gray-400 w-5"></i>
-                                    <span class="text-gray-700 font-mono">${infos.telephone}</span>
-                                </div>
-                                <div class="flex items-center gap-3 flex-wrap">
-                                    <i class="fas fa-chalkboard-user text-blue-500 w-5"></i>
-                                    <span class="text-gray-600 text-sm"><span class="font-medium">Ens. Général :</span> ${escapeHtml(infos.profGeneral)}</span>
-                                </div>
-                                <div class="flex items-center gap-3 flex-wrap">
-                                    <i class="fas fa-tools text-green-500 w-5"></i>
-                                    <span class="text-gray-600 text-sm"><span class="font-medium">Ens. Pro :</span> ${escapeHtml(infos.profPro)}</span>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <i class="fas fa-map-marker-alt text-red-400 w-5 mt-0.5"></i>
-                                    <span class="text-gray-600 text-sm flex-1">${escapeHtml(infos.adresse)}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="h-1 bg-gradient-to-r from-indigo-100 to-transparent"></div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-        }
-        
         function escapeHtml(str) {
             if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -387,55 +253,75 @@
                 return m;
             });
         }
-        
-        function setType(type) {
-            typeActif = type;
-            profActuel = null;
+
+        function afficherReferents(eleveNom) {
+            const container = document.getElementById('carteReferent');
             
-            const btnGen = document.getElementById('btnGeneral');
-            const btnPro = document.getElementById('btnPro');
-            
-            if (type === 'general') {
-                btnGen.className = "flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-indigo-600 text-white shadow-md active:scale-95";
-                btnPro.className = "flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95";
-            } else if (type === 'pro') {
-                btnPro.className = "flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-indigo-600 text-white shadow-md active:scale-95";
-                btnGen.className = "flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95";
+            if (!eleveNom) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-hand-pointer mr-2"></i> Sélectionnez un élève pour voir ses référents
+                    </div>
+                `;
+                return;
             }
             
-            mettreAJourSelect();
+            const infos = ELEVES[eleveNom];
+            if (!infos) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-red-400 text-sm">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> Élève non trouvé
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-user-graduate text-indigo-600 text-3xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">${escapeHtml(eleveNom)}</h2>
+                        <div class="w-16 h-0.5 bg-indigo-300 mx-auto mt-2 rounded-full"></div>
+                    </div>
+                    
+                    <div class="space-y-4 mt-4">
+                        <div class="bg-blue-50 rounded-xl p-4 flex items-center gap-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-chalkboard-user text-blue-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-blue-500 font-medium">ENS. GÉNÉRAL</p>
+                                <p class="text-gray-800 font-semibold text-lg">${escapeHtml(infos.profGeneral)}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 rounded-xl p-4 flex items-center gap-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-tools text-green-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-green-500 font-medium">ENS. PROFESSIONNEL</p>
+                                <p class="text-gray-800 font-semibold text-lg">${escapeHtml(infos.profPro)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-1 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+            `;
         }
-        
-        function resetFiltres() {
-            typeActif = null;
-            profActuel = null;
-            
-            document.getElementById('btnGeneral').className = "flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95";
-            document.getElementById('btnPro').className = "flex-1 py-3 rounded-xl font-semibold text-base transition-all bg-gray-100 text-gray-600 border border-gray-200 active:scale-95";
-            
-            const select = document.getElementById('profSelect');
-            select.innerHTML = '<option value="">-- Choisissez un enseignant --</option>';
-            select.value = "";
-            
-            document.getElementById('listeEleves').innerHTML = `<div class="p-8 text-center text-gray-400 text-sm bg-white rounded-2xl shadow-sm">
-                <i class="fas fa-hand-pointer mr-2"></i> Sélectionnez un type puis un professeur
-            </div>`;
-        }
-        
-        function bindEvents() {
-            document.getElementById('btnGeneral').addEventListener('click', () => setType('general'));
-            document.getElementById('btnPro').addEventListener('click', () => setType('pro'));
-            document.getElementById('resetBtn').addEventListener('click', resetFiltres);
-            
-            const select = document.getElementById('profSelect');
-            select.addEventListener('change', (e) => {
-                profActuel = e.target.value || null;
-                raffraichirAffichage();
-            });
-        }
-        
-        bindEvents();
-        resetFiltres();
+
+        // Événement : changement d'élève
+        eleveSelect.addEventListener('change', (e) => {
+            afficherReferents(e.target.value);
+        });
+
+        // Bouton réinitialiser
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            eleveSelect.value = '';
+            afficherReferents(null);
+        });
     </script>
 </body>
 </html>
